@@ -21,15 +21,9 @@ namespace Medium07
 
         public Player(float health, float armor, int id)
         {
-            _health = health;
+            _health = PlayerPrefs.GetFloat($"user_{_id}.data", health);
             _armor = armor;
             _id = id;
-
-            if (File.Exists(($"user_{_id}.data")))
-            {
-                var data = File.ReadAllText($"user_{_id}.data");
-                _health = float.Parse(data);
-            }
         }
 
         public void ApplyDamage(float damage)
@@ -40,7 +34,37 @@ namespace Medium07
 
             Console.WriteLine($"Вы получили урона - {healthDelta}");
 
-            File.WriteAllText($"user_{_id}.data", _health.ToString());
+            PlayerPrefs.SetFloat($"user_{_id}.data", _health);
+        }
+    }
+
+    class PlayerPrefs
+    {
+        public static void SetFloat(string key, float value)
+        {
+            File.WriteAllText(key, value.ToString());
+        }
+
+        public static float GetFloat(string key,float defaultValue)
+        {
+            if (File.Exists(key))
+            {
+                var data = File.ReadAllText(key);
+                return float.Parse(data);
+            }
+            else
+                return defaultValue;
+        }
+
+        public static float GetFloat(string key)
+        {
+            if (File.Exists(key))
+            {
+                var data = File.ReadAllText(key);
+                return float.Parse(data);
+            }
+            else
+                return 0;
         }
     }
 }
